@@ -26,7 +26,20 @@ class SnakeViewModel {
     var isInitialized = false
         private set
 
-    fun reset(xSize: Float, ySize: Float) {
+    val dead: Boolean
+        get() = snake.points.first().let {
+            !(0f..xSize).contains(it.x) ||
+            !(0f..ySize).contains(it.y) ||
+             snake.contains(it)
+        }
+
+    fun reset() {
+        isInitialized = false
+        Snake(0f, Point(0f, 0f), Direction.DOWN)
+        apple = null
+    }
+
+    fun init(xSize: Float, ySize: Float) {
         this.xSize = xSize
         this.ySize = ySize
         snake = Snake(startingLength, Point(xSize/2, startingLength), Direction.DOWN)
@@ -61,8 +74,10 @@ class SnakeViewModel {
     private fun maybeEatApple() {
         apple?.let {
             val snakeHead = snake.points.first()
-            if (it.x - appleRadius < snakeHead.x && snakeHead.x < it.x + appleRadius &&
-                    it.y - appleRadius < snakeHead.y && snakeHead.y < it.y + appleRadius) {
+            if (
+                ((it.x - appleRadius)..(it.x + appleRadius)).contains(snakeHead.x) &&
+                ((it.y - appleRadius)..(it.y + appleRadius)).contains(snakeHead.y)
+            ) {
                 apple = null
                 snake = snake.grow(snake.speed * 10)
             }

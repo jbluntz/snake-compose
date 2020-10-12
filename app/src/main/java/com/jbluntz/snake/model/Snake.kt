@@ -90,5 +90,20 @@ class Snake(private val baseLength: Float, private val targetLength: Float, val 
         return copy(targetLength = this.targetLength + growth)
     }
 
+    fun contains(point: Point): Boolean {
+        for (i in 3..points.lastIndex) {
+            val first = points[i-1]
+            val second = points[i]
+            if (first.x == second.x) {
+                if (point.x == first.x && (first.y..second.y).contains(point.y))
+                    return true
+            } else {
+                if (point.y == first.y && (first.x..second.x).contains(point.x))
+                    return true
+            }
+        }
+        return false
+    }
+
 }
 

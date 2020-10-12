@@ -1,6 +1,7 @@
 package com.jbluntz.snake
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -14,6 +15,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Preview
 import com.jbluntz.snake.model.Direction
 
@@ -26,12 +30,18 @@ fun SnakeGame() {
         Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(1/4f).align(Alignment.BottomCenter).tapGestureFilter { viewModel.turn(Direction.DOWN) }) {}
         Surface(modifier = Modifier.fillMaxHeight().fillMaxWidth(1/4f).align(Alignment.CenterStart).tapGestureFilter { viewModel.turn(Direction.LEFT) }) {}
         Surface(modifier = Modifier.fillMaxHeight().fillMaxWidth(1/4f).align(Alignment.CenterEnd).tapGestureFilter { viewModel.turn(Direction.RIGHT) }) {}
-
+        if (viewModel.dead) {
+            Text(
+                text = "☠",
+                style = TextStyle(fontSize = 100.sp),
+                modifier = Modifier.wrapContentSize().align(Alignment.Center).tapGestureFilter { viewModel.reset() }
+            )
+        }
         Canvas(
             modifier = Modifier.fillMaxSize()
         ) {
             if (!viewModel.isInitialized) {
-                viewModel.reset(size.width, size.height)
+                viewModel.init(size.width, size.height)
             }
             val path = Path()
             with(viewModel.snake.points.first()) { path.moveTo(x, y)}
@@ -56,7 +66,9 @@ fun SnakeGame() {
                     center = Offset(it.x, it.y)
                 )
             }
-            viewModel.advance()
+            if (!viewModel.dead) {
+                viewModel.advance()
+            }
         }
     }
 }
