@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.gesture.Direction
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.ui.tooling.preview.Preview
+import com.jbluntz.snake.model.Direction
 
 @Composable
 @Preview(showBackground = true)
@@ -52,7 +53,7 @@ fun Snake() {
                 drawCircle(
                     color = Color.Red,
                     radius = viewModel.appleRadius,
-                    center = it
+                    center = Offset(it.x, it.y)
                 )
             }
             viewModel.advance()

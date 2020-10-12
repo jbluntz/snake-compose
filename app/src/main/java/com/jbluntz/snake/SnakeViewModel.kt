@@ -3,8 +3,9 @@ package com.jbluntz.snake
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.gesture.Direction
+import com.jbluntz.snake.model.Direction
+import com.jbluntz.snake.model.Point
+import com.jbluntz.snake.model.isOpposite
 import kotlin.math.abs
 
 class SnakeViewModel {
@@ -19,10 +20,10 @@ class SnakeViewModel {
     val snakeWidth
         get() = startingLength / 5
 
-    var snake by mutableStateOf(listOf(Offset(0f, 0f), Offset(0f,0f)))
+    var snake by mutableStateOf(listOf(Point(0f, 0f), Point(0f,0f)))
         private set
 
-    var apple by mutableStateOf<Offset?>(null)
+    var apple by mutableStateOf<Point?>(null)
         private set
     private var appleTimer = 0
     val appleRadius
@@ -41,8 +42,8 @@ class SnakeViewModel {
         this.xSize = xSize
         this.ySize = ySize
         snake = listOf(
-            Offset(xSize/2, startingLength),
-            Offset(xSize/2, 0f)
+            Point(xSize/2, startingLength),
+            Point(xSize/2, 0f)
         )
         isInitialized = true
     }
@@ -76,7 +77,7 @@ class SnakeViewModel {
         snake = newSnake
     }
 
-    private fun moveHead(newSnake: MutableList<Offset>) {
+    private fun moveHead(newSnake: MutableList<Point>) {
         val firstPoint = newSnake.first()
         when (direction) {
             Direction.DOWN -> {
@@ -94,7 +95,7 @@ class SnakeViewModel {
         }
     }
 
-    private fun moveTail(newSnake: MutableList<Offset>) {
+    private fun moveTail(newSnake: MutableList<Point>) {
         val nextToLastPoint = newSnake[newSnake.lastIndex - 1]
         val lastPoint = newSnake.last()
 
@@ -132,7 +133,7 @@ class SnakeViewModel {
         }
         val x = (1..(xSize/speed).toInt()).random()
         val y = (1..(ySize/speed).toInt()).random()
-        apple = Offset(x*speed, y*speed)
+        apple = Point(x*speed, y*speed)
         appleTimer = 200
     }
 
@@ -148,18 +149,4 @@ class SnakeViewModel {
     }
 
     //endregion
-}
-
-private fun Direction.isOpposite(direction: Direction): Boolean {
-    return  (this == Direction.UP && direction == Direction.DOWN) ||
-            (this == Direction.DOWN && direction == Direction.UP) ||
-            (this == Direction.LEFT && direction == Direction.RIGHT) ||
-            (this == Direction.RIGHT && direction == Direction.LEFT)
-}
-
-private fun Offset.shiftX(f: Float): Offset {
-    return this.copy(x = this.x + f)
-}
-private fun Offset.shiftY(f: Float): Offset {
-    return this.copy(y = this.y + f)
 }
