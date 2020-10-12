@@ -3,9 +3,6 @@ package com.jbluntz.snake
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
-import androidx.compose.material.SwipeableState
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -15,6 +12,7 @@ import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.ui.tooling.preview.Preview
 
@@ -46,9 +44,17 @@ fun Snake() {
                 color = Color.Green,
                 style = Stroke(
                     width = viewModel.snakeWidth,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round
                 )
             )
+            viewModel.apple?.let {
+                drawCircle(
+                    color = Color.Red,
+                    radius = viewModel.appleRadius,
+                    center = it
+                )
+            }
             viewModel.advance()
         }
     }

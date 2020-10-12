@@ -17,17 +17,25 @@ class SnakeViewModel {
         get() = minOf(xSize, ySize) / 5
 
     val snakeWidth
-        get() = startingLength / 10
-
-    var isInitialized = false
-        private set
+        get() = startingLength / 5
 
     var snake by mutableStateOf(listOf(Offset(0f, 0f), Offset(0f,0f)))
         private set
 
+    var apple by mutableStateOf<Offset?>(null)
+        private set
+    private var appleTimer = 0
+    val appleRadius
+        get() = snakeWidth
+
+    private var growTimer = 0
+
     var direction by mutableStateOf(Direction.DOWN)
         private set
     private var turning = false
+
+    var isInitialized = false
+        private set
 
     fun reset(xSize: Float, ySize: Float) {
         this.xSize = xSize
@@ -41,6 +49,13 @@ class SnakeViewModel {
 
     fun advance() {
         if (!isInitialized) { return }
+        moveSnake()
+        maybeAddApple()
+        maybeEatApple()
+    }
+
+    //region movement
+    private fun moveSnake() {
         val newSnake =
             if (turning) {
                 mutableListOf(snake.first()).apply {
@@ -52,7 +67,11 @@ class SnakeViewModel {
             }
 
         moveHead(newSnake)
-        moveTail(newSnake)
+        if (growTimer > 0) {
+            growTimer -= 1
+        } else {
+            moveTail(newSnake)
+        }
 
         snake = newSnake
     }
@@ -102,6 +121,33 @@ class SnakeViewModel {
         this.direction = direction
         turning = true
     }
+    //endregion
+
+    //region apple
+    private fun maybeAddApple() {
+        if (apple != null) { return }
+        if (appleTimer > 0 ) {
+            appleTimer -= 1
+            return
+        }
+        val x = (1..(xSize/speed).toInt()).random()
+        val y = (1..(ySize/speed).toInt()).random()
+        apple = Offset(x*speed, y*speed)
+        appleTimer = 200
+    }
+
+    private fun maybeEatApple() {
+        apple?.let {
+            val snakeHead = snake.first()
+            if (it.x - appleRadius < snakeHead.x && snakeHead.x < it.x + appleRadius &&
+                    it.y - appleRadius < snakeHead.y && snakeHead.y < it.y + appleRadius) {
+                apple = null
+                growTimer = 10
+            }
+        }
+    }
+
+    //endregion
 }
 
 private fun Direction.isOpposite(direction: Direction): Boolean {
@@ -111,9 +157,9 @@ private fun Direction.isOpposite(direction: Direction): Boolean {
             (this == Direction.RIGHT && direction == Direction.LEFT)
 }
 
-fun Offset.shiftX(f: Float): Offset {
+private fun Offset.shiftX(f: Float): Offset {
     return this.copy(x = this.x + f)
 }
-fun Offset.shiftY(f: Float): Offset {
+private fun Offset.shiftY(f: Float): Offset {
     return this.copy(y = this.y + f)
 }
