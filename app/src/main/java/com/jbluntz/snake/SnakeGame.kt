@@ -19,7 +19,7 @@ import com.jbluntz.snake.model.Direction
 
 @Composable
 @Preview(showBackground = true)
-fun Snake() {
+fun SnakeGame() {
     val viewModel = remember { SnakeViewModel() }
     Box(modifier = Modifier.fillMaxSize()) {
         Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(1/4f).align(Alignment.TopCenter).tapGestureFilter { viewModel.turn(Direction.UP) }) {}
@@ -34,9 +34,9 @@ fun Snake() {
                 viewModel.reset(size.width, size.height)
             }
             val path = Path()
-            with(viewModel.snake.first()) { path.moveTo(x, y)}
-            for (i in 1..viewModel.snake.lastIndex) {
-                with(viewModel.snake[i]) {
+            with(viewModel.snake.points.first()) { path.moveTo(x, y)}
+            for (i in 1..viewModel.snake.points.lastIndex) {
+                with(viewModel.snake.points[i]) {
                     path.lineTo(x, y)
                 }
             }
@@ -44,7 +44,7 @@ fun Snake() {
                 path = path,
                 color = Color.Green,
                 style = Stroke(
-                    width = viewModel.snakeWidth,
+                    width = viewModel.snake.width,
                     cap = StrokeCap.Round,
                     join = StrokeJoin.Round
                 )
