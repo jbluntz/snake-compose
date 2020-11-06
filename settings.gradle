@@ -1,2 +1,5 @@
 rootProject.name = "snake"
-include ':app'
+include ':android'
+include ':composeUI'
+include ':snake-model'
+include ':desktop'

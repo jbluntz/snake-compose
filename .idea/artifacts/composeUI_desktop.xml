@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="composeUI-desktop">
+    <output-path>C:\Users\Jared\AndroidStudioProjects\snake\composeUI\build\libs</output-path>
+    <root id="archive" name="composeUI-desktop.jar">
+      <element id="module-output" name="snake.composeUI.desktopMain" />
+    </root>
+  </artifact>
+</component>
