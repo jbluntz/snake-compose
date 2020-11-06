@@ -5,6 +5,8 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,10 +20,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import com.jbluntz.snake.model.Direction
+import com.jbluntz.snake.model.Point
+import com.jbluntz.snake.model.Snake
 
 @Composable
 fun SnakeGame() {
     val viewModel = remember { SnakeViewModel() }
+    val snake: Snake by viewModel.snake.collectAsState()
+    val apple: Point? by viewModel.apple.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(1/4f).align(Alignment.TopCenter).tapGestureFilter { viewModel.turn(Direction.UP) }) {}
         Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(1/4f).align(Alignment.BottomCenter).tapGestureFilter { viewModel.turn(Direction.DOWN) }) {}
@@ -41,9 +47,9 @@ fun SnakeGame() {
                 viewModel.init(size.width, size.height)
             }
             val path = Path()
-            with(viewModel.snake.points.first()) { path.moveTo(x, y)}
-            for (i in 1..viewModel.snake.points.lastIndex) {
-                with(viewModel.snake.points[i]) {
+            with(snake.points.first()) { path.moveTo(x, y)}
+            for (i in 1..snake.points.lastIndex) {
+                with(snake.points[i]) {
                     path.lineTo(x, y)
                 }
             }
@@ -51,12 +57,12 @@ fun SnakeGame() {
                 path = path,
                 color = Color.Green,
                 style = Stroke(
-                    width = viewModel.snake.width,
+                    width = snake.width,
                     cap = StrokeCap.Round,
                     join = StrokeJoin.Round
                 )
             )
-            viewModel.apple?.let {
+            apple?.let {
                 drawCircle(
                     color = Color.Red,
                     radius = viewModel.appleRadius,
