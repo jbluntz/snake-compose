@@ -10,6 +10,12 @@
       <module name="snake.desktop.commonTest" target="1.8" />
       <module name="snake.desktop.jvmMain" target="1.8" />
       <module name="snake.desktop.jvmTest" target="1.8" />
+      <module name="snake.snake-model.commonMain" target="1.6" />
+      <module name="snake.snake-model.commonTest" target="1.6" />
+      <module name="snake.snake-model.desktopMain" target="1.6" />
+      <module name="snake.snake-model.desktopTest" target="1.6" />
+      <module name="snake.snake-model.jvmMain" target="1.6" />
+      <module name="snake.snake-model.jvmTest" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>
