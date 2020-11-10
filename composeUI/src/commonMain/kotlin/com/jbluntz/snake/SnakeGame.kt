@@ -2,12 +2,12 @@ package com.jbluntz.snake
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Surface
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -22,17 +22,13 @@ import androidx.compose.ui.unit.sp
 import com.jbluntz.snake.model.Direction
 import com.jbluntz.snake.model.Point
 import com.jbluntz.snake.model.Snake
+import androidx.compose.ui.gesture.Direction as ComposeDirection
 
 @Composable
-fun SnakeGame() {
-    val viewModel = remember { SnakeViewModel() }
+fun SnakeGame(viewModel: SnakeViewModel) {
     val snake: Snake by viewModel.snake.collectAsState()
     val apple: Point? by viewModel.apple.collectAsState()
-    Box(modifier = Modifier.fillMaxSize()) {
-        Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(1/4f).align(Alignment.TopCenter).tapGestureFilter { viewModel.turn(Direction.UP) }) {}
-        Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(1/4f).align(Alignment.BottomCenter).tapGestureFilter { viewModel.turn(Direction.DOWN) }) {}
-        Surface(modifier = Modifier.fillMaxHeight().fillMaxWidth(1/4f).align(Alignment.CenterStart).tapGestureFilter { viewModel.turn(Direction.LEFT) }) {}
-        Surface(modifier = Modifier.fillMaxHeight().fillMaxWidth(1/4f).align(Alignment.CenterEnd).tapGestureFilter { viewModel.turn(Direction.RIGHT) }) {}
+    Box(modifier = Modifier.fillMaxSize().swipeGestureFilter { viewModel.turn(it.toDirection()) }) {
         if (viewModel.dead) {
             Text(
                 text = "☠",
@@ -73,5 +69,14 @@ fun SnakeGame() {
                 viewModel.advance()
             }
         }
+    }
+}
+
+private fun ComposeDirection.toDirection(): Direction {
+    return when(this) {
+        ComposeDirection.UP -> Direction.UP
+        ComposeDirection.DOWN -> Direction.DOWN
+        ComposeDirection.LEFT -> Direction.LEFT
+        ComposeDirection.RIGHT -> Direction.RIGHT
     }
 }
