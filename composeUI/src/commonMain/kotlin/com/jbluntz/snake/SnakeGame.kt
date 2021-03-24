@@ -1,17 +1,16 @@
 package com.jbluntz.snake
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -19,26 +18,22 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
-import com.jbluntz.snake.model.Direction
 import com.jbluntz.snake.model.Point
 import com.jbluntz.snake.model.Snake
-import androidx.compose.ui.gesture.Direction as ComposeDirection
 
 @Composable
 fun SnakeGame(viewModel: SnakeViewModel) {
     val snake: Snake by viewModel.snake.collectAsState()
     val apple: Point? by viewModel.apple.collectAsState()
-    Box(modifier = Modifier.fillMaxSize().swipeGestureFilter { viewModel.turn(it.toDirection()) }) {
+    Box(modifier = Modifier.fillMaxSize().swipeable { viewModel.turn(it) }) {
         if (viewModel.dead) {
             Text(
                 text = "☠",
                 style = TextStyle(fontSize = 100.sp),
-                modifier = Modifier.wrapContentSize().align(Alignment.Center).tapGestureFilter { viewModel.reset() }
+                modifier = Modifier.wrapContentSize().align(Alignment.Center).clickable { viewModel.reset() }
             )
         }
-        Canvas(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             if (!viewModel.isInitialized) {
                 viewModel.init(size.width, size.height)
             }
@@ -69,14 +64,5 @@ fun SnakeGame(viewModel: SnakeViewModel) {
                 viewModel.advance()
             }
         }
-    }
-}
-
-private fun ComposeDirection.toDirection(): Direction {
-    return when(this) {
-        ComposeDirection.UP -> Direction.UP
-        ComposeDirection.DOWN -> Direction.DOWN
-        ComposeDirection.LEFT -> Direction.LEFT
-        ComposeDirection.RIGHT -> Direction.RIGHT
     }
 }
