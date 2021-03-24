@@ -54,11 +54,7 @@ fun SnakeGame(viewModel: SnakeViewModel) {
                 )
             )
             apple?.let {
-                drawCircle(
-                    color = Color.Red,
-                    radius = viewModel.appleRadius,
-                    center = Offset(it.x, it.y)
-                )
+                drawApple(it.x, it.y, viewModel.appleRadius)
             }
             if (!viewModel.dead) {
                 viewModel.advance()
