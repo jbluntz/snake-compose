@@ -1,10 +1,15 @@
 package com.jbluntz.snake
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,16 +26,22 @@ import androidx.compose.ui.unit.sp
 import com.jbluntz.snake.model.Point
 import com.jbluntz.snake.model.Snake
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SnakeGame(viewModel: SnakeViewModel) {
     val snake: Snake by viewModel.snake.collectAsState()
     val apple: Point? by viewModel.apple.collectAsState()
+    val dead: Boolean by viewModel.dead.collectAsState(false)
     Box(modifier = Modifier.fillMaxSize().swipeable { viewModel.turn(it) }) {
-        if (viewModel.dead) {
+        AnimatedVisibility(
+            visible = dead,
+            enter = fadeIn(animationSpec = tween(durationMillis = 800, easing = LinearOutSlowInEasing)),
+            exit = fadeOut(),
+            modifier = Modifier.align(Alignment.Center)) {
             Text(
-                text = "☠",
+                text = "☠️",
                 style = TextStyle(fontSize = 100.sp),
-                modifier = Modifier.wrapContentSize().align(Alignment.Center).clickable { viewModel.reset() }
+                modifier = Modifier.clickable { viewModel.reset() }
             )
         }
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -56,7 +67,7 @@ fun SnakeGame(viewModel: SnakeViewModel) {
             apple?.let {
                 drawApple(it.x, it.y, viewModel.appleRadius)
             }
-            if (!viewModel.dead) {
+            if (!dead) {
                 viewModel.advance()
             }
         }

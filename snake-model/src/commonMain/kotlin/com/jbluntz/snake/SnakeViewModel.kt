@@ -3,8 +3,10 @@ package com.jbluntz.snake
 import com.jbluntz.snake.model.Direction
 import com.jbluntz.snake.model.Point
 import com.jbluntz.snake.model.Snake
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 
 private val initialSnake = Snake(0f, Point(0f, 0f), Direction.DOWN)
 
@@ -29,12 +31,13 @@ class SnakeViewModel {
     var isInitialized = false
         private set
 
-    val dead: Boolean
-        get() = _snake.points.first().let {
+    val dead: Flow<Boolean> = snake.map { snake ->
+        snake.points.first().let {
             !(0f..xSize).contains(it.x) ||
             !(0f..ySize).contains(it.y) ||
-             _snake.contains(it)
+            snake.contains(it)
         }
+    }
 
     fun reset() {
         isInitialized = false
